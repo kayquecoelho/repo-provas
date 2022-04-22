@@ -13,22 +13,25 @@ import { IconButton, InputAdornment } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import LoadingButton from "@mui/lab/LoadingButton";
 import GitHubIcon from "@mui/icons-material/GitHub";
-import Divider from '@mui/material/Divider';
+import Divider from "@mui/material/Divider";
 import api from "../../services/api";
-import useAuth from "../../hooks/useAuth";
 import LogoComponent from "../../components/Logo";
 
-export default function Login() {
+export default function SignUp() {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
+    confirmPassword: "",
+  });
+  const [errorFeedback, setErrorFeedback] = useState({
+    error: "",
+    message: "",
   });
 
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
-  const { setAndPersistToken } = useAuth();
   const localToken = localStorage.getItem("token");
 
   useEffect(() => {
@@ -43,12 +46,19 @@ export default function Login() {
 
   async function handleSubmit(event) {
     event.preventDefault();
+
+    if (formData.confirmPassword !== formData.password) {
+      return setErrorFeedback({ error: true, message: "As senhas não coincidem" });
+    }
+
+    setErrorFeedback({ error: "", message: "" });
     setIsLoading(true);
+    const { email, password } = formData;
 
     try {
-      const response = await api.login(formData);
-      setAndPersistToken(response.data);
-      navigate("/home");     
+      await api.signUp({email, password});
+      
+      navigate("/");
     } catch (error) {
       alert(error.response.data);
     }
@@ -61,6 +71,7 @@ export default function Login() {
       maxWidth="xs"
       sx={{
         marginTop: 4,
+        marginBottom: 4,
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
@@ -81,7 +92,7 @@ export default function Login() {
           <LockOutlinedIcon />
         </Avatar>
         <Typography component="h1" variant="h5">
-          Sign in
+          Sign up
         </Typography>
 
         <LoadingButton
@@ -92,7 +103,7 @@ export default function Login() {
         >
           Login with GitHub
         </LoadingButton>
-        
+
         <Divider variant="fullWidth">OU</Divider>
 
         <Box
@@ -115,6 +126,8 @@ export default function Login() {
             autoFocus
           />
           <TextField
+            error={errorFeedback.error}
+            helperText={errorFeedback.message}
             margin="normal"
             required
             disabled={isLoading}
@@ -138,6 +151,33 @@ export default function Login() {
             }}
             label="Password"
           />
+          <TextField
+            error={errorFeedback.error}
+            helperText={errorFeedback.message}
+            margin="normal"
+            required
+            disabled={isLoading}
+            fullWidth
+            pattern={formData.password}
+            id="confirm-password"
+            value={formData.confirmPassword}
+            type={showPassword ? "text" : "password"}
+            onChange={(event) => handleChange("confirmPassword", event)}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label="toggle password visibility"
+                    onClick={() => setShowPassword(!showPassword)}
+                    edge="end"
+                  >
+                    {!showPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
+            label="Confirm Password"
+          />
           <LoadingButton
             type="submit"
             loading={isLoading}
@@ -149,8 +189,8 @@ export default function Login() {
           </LoadingButton>
           <Grid container justifyContent="center">
             <Grid item>
-              <StyledLink to={"/auth/sign-up"}>
-                {"Don't have an account? Sign Up"}
+              <StyledLink to={"/"}>
+                {"Already have an account? Sign in"}
               </StyledLink>
             </Grid>
           </Grid>
@@ -162,4 +202,4 @@ export default function Login() {
 
 const StyledLink = styled(Link)`
   color: rgb(25, 118, 210);
-`
+`;

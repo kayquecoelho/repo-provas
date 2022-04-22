@@ -8,6 +8,13 @@ async function login(data) {
   return promise;
 }
 
+async function signUp(data) {
+  const promise = axios.post(`${baseURL}/auth/sign-up`, data);
+
+  return promise;
+}
+
 export default {
   login,
-}
+  signUp
+};
