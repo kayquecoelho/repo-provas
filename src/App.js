@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import AuthContext from "./contexts/authContext";
+import Home from "./pages/Home";
 import Login from "./pages/Login";
 import SignUp from "./pages/SignUp";
 
@@ -16,8 +17,9 @@ function App() {
     <AuthContext.Provider value={{ token, setAndPersistToken }}>
       <BrowserRouter>
         <Routes>
+          <Route path="/" element={<Login />} />
           <Route path="/auth/sign-up" element={<SignUp />}/>
-          <Route path="" element={<Login />} />
+          <Route path="/home" element={<Home />}/>
         </Routes>
       </BrowserRouter>
     </AuthContext.Provider>

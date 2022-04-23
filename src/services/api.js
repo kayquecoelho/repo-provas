@@ -14,7 +14,14 @@ async function signUp(data) {
   return promise;
 }
 
+async function teste(data) {
+  const promise = axios.get(`${baseURL}/teste`, data);
+
+  return promise;
+}
+
 export default {
   login,
-  signUp
+  signUp,
+  teste
 };
