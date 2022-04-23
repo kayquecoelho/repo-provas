@@ -9,6 +9,7 @@ import {
   ListItemText,
   Tab,
   TextField,
+  Typography,
 } from "@mui/material";
 
 import LogoComponent from "../../components/Logo";
@@ -21,16 +22,16 @@ import api from "../../services/api";
 export default function Home() {
   const array = ["p", "p2", "p3", "p4", "p5"];
   const [value, setValue] = useState("1");
-  const [currentItem, setCurrentItem] = useState(null);
+  const [currentTerm, setCurrentTerm] = useState(null);
   const [data, setData] = useState(null);
 
   const handleClick = (item) => {
-    if (currentItem === item) {
-      setCurrentItem(null);
-    } else if (currentItem === null) {
-      setCurrentItem(item);
+    if (currentTerm === item) {
+      setCurrentTerm(null);
+    } else if (currentTerm === null) {
+      setCurrentTerm(item);
     } else {
-      setCurrentItem(item);
+      setCurrentTerm(item);
     }
   };
 
@@ -107,9 +108,9 @@ export default function Home() {
 
         <List sx={{ width: "100%", maxWidth: 700 }}>
           {data.map((d, index) => (
-            <ListItem
+            <Terms
               {...d}
-              currentItem={currentItem}
+              currentTerm={currentTerm}
               index={index}
               handleClick={handleClick}
             />
@@ -121,22 +122,81 @@ export default function Home() {
   );
 }
 
-function ListItem({ handleClick, index, currentItem, number, disciplines }) {
+function Terms({ handleClick, index, currentTerm, number, disciplines }) {
+  const [currentDiscipline, setCurrentDiscipline] = useState(null);
+
+  function changeDiscipline(item) {
+    if (currentDiscipline === item) {
+      setCurrentDiscipline(null);
+    } else if (currentDiscipline === null) {
+      setCurrentDiscipline(item);
+    } else {
+      setCurrentDiscipline(item);
+    }
+  }
+
   return (
     <>
       <ListItemButton onClick={() => handleClick(index)}>
         <ListItemText primary={number} />
-        {currentItem === index ? <ExpandLess /> : <ExpandMore />}
+        {currentTerm === index ? <ExpandLess /> : <ExpandMore />}
       </ListItemButton>
 
-      <Collapse in={currentItem === index} timeout="auto" unmountOnExit>
-        <List component="div" disablePadding>
-          <ListItemButton sx={{ pl: 4 }}>
-            <ListItemText primary="Starred" />
-          </ListItemButton>
+      <Collapse in={currentTerm === index} timeout="auto" unmountOnExit>
+        <List component="div">
+          {disciplines.map((discipline, index) => (
+            <Disciplines
+              {...discipline}
+              index={index}
+              changeDiscipline={changeDiscipline}
+              currentDiscipline={currentDiscipline}
+            />
+          ))}
+
+          {disciplines.length === 0 && (
+            <ListItemText primary="Não há disciplinas para este período" />
+          )}
         </List>
       </Collapse>
     </>
   );
 }
 
+function Disciplines({
+  changeDiscipline,
+  currentDiscipline,
+  index,
+  name,
+  categories,
+}) {
+  console.log(categories);
+  const categoriesArr = categories;
+  return (
+    <>
+      <ListItemButton onClick={() => changeDiscipline(index)}>
+        <ListItemText primary={name} />
+        {currentDiscipline === index ? <ExpandLess /> : <ExpandMore />}
+      </ListItemButton>
+
+      <Collapse in={currentDiscipline === index} timeout="auto" unmountOnExit>
+        <List component="div" sx={{ pl: 4, pr: 4 }}>
+          {categoriesArr.map(
+            (category) =>
+              category && (
+                <>
+                  <Typography variant="h5" component="h6" color="text.primary">
+                    {category.name}
+                  </Typography>
+                  {category.tests.map((test) => (
+                    <Typography>
+                      {`${test?.name} - ${test?.pdfUrl} (${test?.disciplineTeacher.teacher.name})`}
+                    </Typography>
+                  ))}
+                </>
+              )
+          )}
+        </List>
+      </Collapse>
+    </>
+  );
+}
