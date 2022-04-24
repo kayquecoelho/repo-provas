@@ -6,7 +6,8 @@ import Login from "./pages/Login";
 import SignUp from "./pages/SignUp";
 
 function App() {
-  const [token, setToken] = useState(localStorage.getItem("token"));
+  const localToken = JSON.parse(localStorage.getItem("token"));
+  const [token, setToken] = useState(localToken);
 
   function setAndPersistToken(token) {
     setToken(token);
@@ -20,6 +21,7 @@ function App() {
           <Route path="/" element={<Login />} />
           <Route path="/auth/sign-up" element={<SignUp />}/>
           <Route path="/home" element={<Home />}/>
+          <Route path="/teachers" element={<Home />}/>
         </Routes>
       </BrowserRouter>
     </AuthContext.Provider>

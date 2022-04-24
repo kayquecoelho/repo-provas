@@ -2,6 +2,15 @@ import axios from "axios";
 
 const baseURL = "http://localhost:4000";
 
+function createHeader(token) {
+  const header = { 
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  }
+  return header;
+}
+
 async function login(data) {
   const promise = axios.post(`${baseURL}/auth/login`, data);
 
@@ -14,8 +23,16 @@ async function signUp(data) {
   return promise;
 }
 
-async function teste(data) {
-  const promise = axios.get(`${baseURL}/teste`, data);
+async function getTerms(token) {
+  const header = createHeader(token);
+  const promise = axios.get(`${baseURL}/terms`, header);
+
+  return promise;
+}
+
+async function getTeachers(token) {
+  const header = createHeader(token);
+  const promise = axios.get(`${baseURL}/teachers`, header);
 
   return promise;
 }
@@ -23,5 +40,6 @@ async function teste(data) {
 export default {
   login,
   signUp,
-  teste
+  getTerms,
+  getTeachers
 };

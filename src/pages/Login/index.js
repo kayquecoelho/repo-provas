@@ -47,7 +47,7 @@ export default function Login() {
 
     try {
       const response = await api.login(formData);
-      setAndPersistToken(response.data);
+      setAndPersistToken(response.data.token);
       navigate("/home");     
     } catch (error) {
       alert(error.response.data);
