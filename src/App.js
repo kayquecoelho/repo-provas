@@ -16,7 +16,7 @@ function App() {
   
   return (
     <AuthContext.Provider value={{ token, setAndPersistToken }}>
-      <BrowserRouter>
+      <BrowserRouter forceRefresh={true}>
         <Routes>
           <Route path="/" element={<Login />} />
           <Route path="/auth/sign-up" element={<SignUp />}/>

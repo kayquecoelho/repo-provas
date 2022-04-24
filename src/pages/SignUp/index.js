@@ -24,7 +24,7 @@ export default function SignUp() {
     confirmPassword: "",
   });
   const [errorFeedback, setErrorFeedback] = useState({
-    error: "",
+    error: false,
     message: "",
   });
 
