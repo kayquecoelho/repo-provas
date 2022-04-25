@@ -1,6 +1,7 @@
 import { ExpandLess, ExpandMore } from "@mui/icons-material";
-import { Collapse, List, ListItemButton, ListItemText, Typography } from "@mui/material";
+import { Collapse, List, ListItemButton, ListItemText } from "@mui/material";
 import * as aggregateByCategory from "../../../utils/aggregateByCategory.js";
+import Test from "../Test/index.js";
 
 export default function Disciplines({
   changeDiscipline,
@@ -8,8 +9,9 @@ export default function Disciplines({
   index,
   name,
   classes,
+  number
 }) {
-  const tests = aggregateByCategory.terms(classes);
+  const categories = aggregateByCategory.terms(classes, number);
 
   return (
     <>
@@ -20,19 +22,11 @@ export default function Disciplines({
 
       <Collapse in={currentDiscipline === index} timeout="auto" unmountOnExit>
         <List component="div" sx={{ pl: 4, pr: 4 }}>
-          {tests.map((test, index) => (
-            <div key={index}>
-              <Typography variant="h5" component="h6">
-                {test[0]}
-              </Typography>
-              {test[1].map((t, index) => (
-                <Typography key={index}>
-                  {`${t.name} - ${t.pdfUrl} (${t.teacher})`}
-                </Typography>
-              ))}
-            </div>
+          {categories.map((category, index) => (
+            <Test key={index} category={category} />
           ))}
-          {tests.length === 0 && "There are no tests"}
+
+          {categories.length === 0 && "There are no tests"}
         </List>
       </Collapse>
     </>

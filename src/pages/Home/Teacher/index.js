@@ -1,6 +1,7 @@
 import { ExpandLess, ExpandMore } from "@mui/icons-material";
-import { Collapse, List, ListItemButton, ListItemText, Typography } from "@mui/material";
+import { Collapse, List, ListItemButton, ListItemText } from "@mui/material";
 import * as aggregateByCategory from "../../../utils/aggregateByCategory.js";
+import Test from "../Test/index.js";
 
 export default function Teachers({
   handleClick,
@@ -10,7 +11,7 @@ export default function Teachers({
   disciplineTeacher,
 }) {
   const categories = aggregateByCategory.teachers(disciplineTeacher);
-  
+
   return (
     <>
       <ListItemButton onClick={() => handleClick(index)}>
@@ -19,18 +20,9 @@ export default function Teachers({
       </ListItemButton>
 
       <Collapse in={currentListItem === index} timeout="auto" unmountOnExit>
-        <List component="div" sx={{pr: 4, pl: 4}}>
+        <List component="div" sx={{ pr: 4, pl: 4 }}>
           {categories.map((category, index) => (
-            <div key={index}>
-              <Typography variant="h5" component="h6" >
-                {category[0]}
-              </Typography>
-              {category[1].map((test, index) => (
-                <Typography key={index}>
-                  {`${test.name} - ${test.pdfUrl} (${test.disciplineName})`}
-                </Typography>
-              ))}
-            </div>
+            <Test key={index} category={category} />
           ))}
 
           {categories.length === 0 && (

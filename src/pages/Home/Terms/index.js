@@ -30,6 +30,7 @@ export default function Terms({ handleClick, index, currentListItem, number, dis
               key={discipline.id}
               {...discipline}
               index={index}
+              number={number}
               changeDiscipline={changeDiscipline}
               currentDiscipline={currentDiscipline}
             />

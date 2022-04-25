@@ -5,7 +5,7 @@ import useAuth from "../../hooks/useAuth";
 
 import { Container, CssBaseline, List, Tab } from "@mui/material";
 import { TabContext, TabList } from "@mui/lab";
-import Terms from "./Term";
+import Terms from "./Terms";
 import Teachers from "./Teacher";
 import Header from "./Header";
 
