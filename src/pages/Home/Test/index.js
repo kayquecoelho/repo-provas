@@ -1,7 +1,6 @@
 import { Link, Typography } from "@mui/material";
 
 export default function Test({ category }) {
-  console.log(category);
   return (
     <>
       <Typography

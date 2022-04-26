@@ -12,6 +12,7 @@ import Header from "./Header";
 export default function Home() {
   const [currentListItem, setCurrentListItem] = useState(null);
   const [data, setData] = useState([]);
+  const [search, setSearch] = useState("");
   const { pathname } = useLocation();
   const { token } = useAuth();
   const navigate = useNavigate();
@@ -22,13 +23,15 @@ export default function Home() {
     }
 
     if (pathname === "/home") {
-      getItems('terms');
+      getItems("terms");
     } else if (pathname === "/teachers") {
-      getItems('teachers');
+      getItems("teachers");
     }
+    setSearch("");
+    setCurrentListItem(null);
     // eslint-disable-next-line
   }, [pathname]);
- 
+
   function logout() {
     localStorage.removeItem("token");
     navigate("/");
@@ -40,7 +43,7 @@ export default function Home() {
   async function getItems(type) {
     let response;
     try {
-      if (type === 'teachers') {
+      if (type === "teachers") {
         response = await api.getTeachers(token);
       } else {
         response = await api.getTerms(token);
@@ -64,6 +67,20 @@ export default function Home() {
     }
   }
 
+  function filterTeacherBySearch(teacher) {
+    return teacher.name.toLowerCase().includes(search.toLowerCase());
+  }
+
+  function filterDisciplineBySearch(term) {
+    if (search.length === 0) return term;
+
+    const disciplines = term.disciplines;
+    const filtered = disciplines.filter((discipline) =>
+      discipline.name.toLowerCase().includes(search.toLowerCase())
+    );
+    return filtered.length !== 0;
+  }
+
   return (
     <>
       <CssBaseline />
@@ -76,32 +93,37 @@ export default function Home() {
           alignItems: "center",
         }}
       >
-        <Header logout={logout} />
+        <Header logout={logout} setSearch={setSearch} search={search} />
 
         <Navigation setData={setData} />
 
         <List sx={{ width: "100%", maxWidth: 700 }}>
           {pathname === "/home" &&
-            data?.map((d, index) => (
-              <Terms
-                key={d.id}
-                {...d}
-                currentListItem={currentListItem}
-                index={index}
-                handleClick={handleClick}
-              />
-            ))}
+            data
+              ?.filter(filterDisciplineBySearch)
+              .map((d, index) => (
+                <Terms
+                  key={d.id}
+                  {...d}
+                  currentListItem={currentListItem}
+                  index={index}
+                  handleClick={handleClick}
+                  search={search}
+                />
+              ))}
 
           {pathname === "/teachers" &&
-            data?.map((d, index) => (
-              <Teachers
-                key={d.id}
-                {...d}
-                currentListItem={currentListItem}
-                index={index}
-                handleClick={handleClick}
-              />
-            ))}
+            data
+              ?.filter(filterTeacherBySearch)
+              .map((instructor, index) => (
+                <Teachers
+                  key={instructor.id}
+                  {...instructor}
+                  currentListItem={currentListItem}
+                  index={index}
+                  handleClick={handleClick}
+                />
+              ))}
         </List>
       </Container>
     </>

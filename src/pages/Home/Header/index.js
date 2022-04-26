@@ -1,8 +1,11 @@
 import { Box, Divider, TextField } from "@mui/material";
 import LogoComponent from "../../../components/Logo";
 import LogoutIcon from "@mui/icons-material/Logout";
+import { useLocation } from "react-router-dom";
 
-export default function Header({ logout }) {
+export default function Header({ logout, setSearch, search }) {
+  const { pathname } = useLocation();
+
   return (
     <>
       <Box
@@ -29,7 +32,13 @@ export default function Header({ logout }) {
       <TextField
         fullWidth
         sx={{ maxWidth: "400px" }}
-        label="Pesquise por disciplina"
+        label={
+          pathname === "/home"
+            ? "Search for discipline"
+            : "Search for instructor"
+        }
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
       />
       <Divider
         sx={{ width: "100%", height: 2, mt: 4, mb: 4 }}
