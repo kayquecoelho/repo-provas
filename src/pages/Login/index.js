@@ -1,22 +1,21 @@
 import { useEffect, useState } from "react";
-import styled from "styled-components";
 import Avatar from "@mui/material/Avatar";
 import CssBaseline from "@mui/material/CssBaseline";
-import TextField from "@mui/material/TextField";
-import { Link, useNavigate } from "react-router-dom";
-import Grid from "@mui/material/Grid";
+
+import { useNavigate } from "react-router-dom";
 import Box from "@mui/material/Box";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
-import { IconButton, InputAdornment } from "@mui/material";
-import { Visibility, VisibilityOff } from "@mui/icons-material";
-import LoadingButton from "@mui/lab/LoadingButton";
-import GitHubIcon from "@mui/icons-material/GitHub";
-import Divider from '@mui/material/Divider';
+import GithubButton from "../../components/GithubButton";
+import Divider from "@mui/material/Divider";
 import api from "../../services/api";
 import useAuth from "../../hooks/useAuth";
 import LogoComponent from "../../components/Logo";
+import PasswordInput from "../../components/PasswordInput";
+import EmailInput from "../../components/EmailInput";
+import Button from "../../components/LoadingButton";
+import Footer from "../../components/Footer";
 
 export default function Login() {
   const [formData, setFormData] = useState({
@@ -24,7 +23,6 @@ export default function Login() {
     password: "",
   });
 
-  const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
@@ -48,7 +46,7 @@ export default function Login() {
     try {
       const response = await api.login(formData);
       setAndPersistToken(response.data.token);
-      navigate("/home");     
+      navigate("/home");
     } catch (error) {
       alert(error.response.data);
     }
@@ -84,82 +82,38 @@ export default function Login() {
           Sign in
         </Typography>
 
-        <LoadingButton
-          fullWidth
-          sx={{ mt: 3, mb: 2, bgcolor: "#424445" }}
-          variant="contained"
-          startIcon={<GitHubIcon />}
-        >
-          Login with GitHub
-        </LoadingButton>
-        
-        <Divider variant="fullWidth">OU</Divider>
+        <GithubButton isLoading={isLoading} />
 
+        <Divider sx={{ width: "100%" }} variant="fullWidth">
+          OU
+        </Divider>
+        
         <Box
           component="form"
           onSubmit={handleSubmit}
           sx={{ mt: 1 }}
           autoComplete="off"
         >
-          <TextField
-            margin="normal"
-            required
-            disabled={isLoading}
-            fullWidth
-            id="email"
-            type="email"
-            value={formData.email}
-            onChange={(event) => handleChange("email", event)}
+          <EmailInput
             label="Email Address"
-            autoComplete="disabled"
-            autoFocus
+            isLoading={isLoading}
+            handleChange={handleChange}
+            value={formData.email}
           />
-          <TextField
-            margin="normal"
-            required
-            disabled={isLoading}
-            fullWidth
-            id="password"
-            value={formData.password}
-            type={showPassword ? "text" : "password"}
-            onChange={(event) => handleChange("password", event)}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton
-                    aria-label="toggle password visibility"
-                    onClick={() => setShowPassword(!showPassword)}
-                    edge="end"
-                  >
-                    {!showPassword ? <VisibilityOff /> : <Visibility />}
-                  </IconButton>
-                </InputAdornment>
-              ),
-            }}
+
+          <PasswordInput
             label="Password"
+            value={formData.password}
+            handleChange={handleChange}
+            errorFeedback={{ error: false, message: "" }}
+            isLoading={isLoading}
           />
-          <LoadingButton
-            type="submit"
-            loading={isLoading}
-            fullWidth
-            variant="contained"
-            sx={{ mt: 3, mb: 2 }}
-          >
-            Sign In
-          </LoadingButton>
-          <Grid container justifyContent="center">
-            <Grid item>
-              <StyledLink to={"/auth/sign-up"}>
-                {"Don't have an account? Sign Up"}
-              </StyledLink>
-            </Grid>
-          </Grid>
+
+          <Button isLoading={isLoading}>Sign In</Button>
+
+          <Footer link={"/auth/sign-up"}>Don't have an account? Sign Up</Footer>
         </Box>
       </Box>
     </Container>
   );
 }
-
-const StyledLink = styled(Link)`
-  color: rgb(25, 118, 210);
-`

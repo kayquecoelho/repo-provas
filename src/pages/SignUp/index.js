@@ -1,21 +1,20 @@
 import { useEffect, useState } from "react";
-import styled from "styled-components";
+import { useNavigate } from "react-router-dom";
+import api from "../../services/api";
+
 import Avatar from "@mui/material/Avatar";
 import CssBaseline from "@mui/material/CssBaseline";
-import TextField from "@mui/material/TextField";
-import { Link, useNavigate } from "react-router-dom";
-import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
-import { IconButton, InputAdornment } from "@mui/material";
-import { Visibility, VisibilityOff } from "@mui/icons-material";
-import LoadingButton from "@mui/lab/LoadingButton";
-import GitHubIcon from "@mui/icons-material/GitHub";
 import Divider from "@mui/material/Divider";
-import api from "../../services/api";
 import LogoComponent from "../../components/Logo";
+import PasswordInput from "../../components/PasswordInput";
+import EmailInput from "../../components/EmailInput";
+import Button from "../../components/LoadingButton";
+import GithubButton from "../../components/GithubButton";
+import Footer from "../../components/Footer";
 
 export default function SignUp() {
   const [formData, setFormData] = useState({
@@ -28,7 +27,6 @@ export default function SignUp() {
     message: "",
   });
 
-  const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
@@ -48,7 +46,10 @@ export default function SignUp() {
     event.preventDefault();
 
     if (formData.confirmPassword !== formData.password) {
-      return setErrorFeedback({ error: true, message: "As senhas não coincidem" });
+      return setErrorFeedback({
+        error: true,
+        message: "As senhas não coincidem",
+      });
     }
 
     setErrorFeedback({ error: "", message: "" });
@@ -56,8 +57,8 @@ export default function SignUp() {
     const { email, password } = formData;
 
     try {
-      await api.signUp({email, password});
-      
+      await api.signUp({ email, password });
+
       navigate("/");
     } catch (error) {
       alert(error.response.data);
@@ -95,16 +96,11 @@ export default function SignUp() {
           Sign up
         </Typography>
 
-        <LoadingButton
-          fullWidth
-          sx={{ mt: 3, mb: 2, bgcolor: "#424445" }}
-          variant="contained"
-          startIcon={<GitHubIcon />}
-        >
-          Login with GitHub
-        </LoadingButton>
+        <GithubButton isLoading={isLoading} />
 
-        <Divider variant="fullWidth">OU</Divider>
+        <Divider sx={{ width: "100%" }} variant="fullWidth">
+          OU
+        </Divider>
 
         <Box
           component="form"
@@ -112,94 +108,34 @@ export default function SignUp() {
           sx={{ mt: 1 }}
           autoComplete="off"
         >
-          <TextField
-            margin="normal"
-            required
-            disabled={isLoading}
-            fullWidth
-            id="email"
-            type="email"
-            value={formData.email}
-            onChange={(event) => handleChange("email", event)}
+          <EmailInput
             label="Email Address"
-            autoComplete="disabled"
-            autoFocus
+            isLoading={isLoading}
+            handleChange={handleChange}
+            value={formData.email}
           />
-          <TextField
-            error={errorFeedback.error}
-            helperText={errorFeedback.message}
-            margin="normal"
-            required
-            disabled={isLoading}
-            fullWidth
-            id="password"
-            value={formData.password}
-            type={showPassword ? "text" : "password"}
-            onChange={(event) => handleChange("password", event)}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton
-                    aria-label="toggle password visibility"
-                    onClick={() => setShowPassword(!showPassword)}
-                    edge="end"
-                  >
-                    {!showPassword ? <VisibilityOff /> : <Visibility />}
-                  </IconButton>
-                </InputAdornment>
-              ),
-            }}
+
+          <PasswordInput
             label="Password"
+            value={formData.password}
+            handleChange={handleChange}
+            errorFeedback={errorFeedback}
+            isLoading={isLoading}
           />
-          <TextField
-            error={errorFeedback.error}
-            helperText={errorFeedback.message}
-            margin="normal"
-            required
-            disabled={isLoading}
-            fullWidth
-            pattern={formData.password}
-            id="confirm-password"
-            value={formData.confirmPassword}
-            type={showPassword ? "text" : "password"}
-            onChange={(event) => handleChange("confirmPassword", event)}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton
-                    aria-label="toggle password visibility"
-                    onClick={() => setShowPassword(!showPassword)}
-                    edge="end"
-                  >
-                    {!showPassword ? <VisibilityOff /> : <Visibility />}
-                  </IconButton>
-                </InputAdornment>
-              ),
-            }}
+
+          <PasswordInput
             label="Confirm Password"
+            value={formData.confirmPassword}
+            handleChange={handleChange}
+            errorFeedback={errorFeedback}
+            isLoading={isLoading}
           />
-          <LoadingButton
-            type="submit"
-            loading={isLoading}
-            fullWidth
-            variant="contained"
-            sx={{ mt: 3, mb: 2 }}
-          >
-            Sign In
-          </LoadingButton>
-          <Grid container justifyContent="center">
-            <Grid item>
-              <StyledLink to={"/"}>
-                {"Already have an account? Sign in"}
-              </StyledLink>
-            </Grid>
-          </Grid>
+
+          <Button isLoading={isLoading}>Sign Up</Button>
+
+          <Footer link={"/"}>Already have an account? Sign in</Footer>
         </Box>
       </Box>
     </Container>
   );
 }
-
-const StyledLink = styled(Link)`
-  color: rgb(25, 118, 210);
-`;
