@@ -58,6 +58,15 @@ async function getDisciplines(token) {
   return promise;
 }
 
+async function getInstructors(token, disciplineId) {
+  const header = createHeader(token);
+  const promise = await axios.get(
+    `${baseURL}/teachers?disciplineId=${disciplineId}`,
+    header
+  );
+  return promise;
+}
+
 const api = {
   login,
   signUp,
@@ -65,6 +74,7 @@ const api = {
   increaseViewCount,
   getCategories,
   getDisciplines,
+  getInstructors
 };
 
 export default api;

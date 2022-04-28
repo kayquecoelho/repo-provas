@@ -31,9 +31,11 @@ export default function AddTests() {
     }
 
     if (testData.discipline){
-      
+      getTeachers();
     }
-  }, [testData])
+
+    //eslint-disable-next-line
+  }, [testData, categories, disciplines])
 
   async function getCategoriesAndDisciplines(){
     try {
@@ -44,6 +46,15 @@ export default function AddTests() {
       setDisciplines(disciplines.data);
     } catch (error) {
       alert(error.response.data); 
+    }
+  }
+
+  async function getTeachers() {
+    try {
+      const instructors = await api.getInstructors(token, testData.discipline.id);
+      setInstructors(instructors.data);
+    } catch (error) {
+      alert(error.response.data);
     }
   }
 
@@ -117,6 +128,7 @@ export default function AddTests() {
             handleChange={handleChange}
             name="instructor"
             value={testData.instructor}
+            options={instructors}
           />
 
           <LoadingButton variant="contained" fullWidth>
@@ -142,7 +154,7 @@ function Input({ label, value, handleChange, name }) {
 }
 
 function AutocompleteComponent({ label, testData, handleChange, name, value, options }) {
-  const mappedOptions = options?.map(option => ({label: option.name, id: option.id})) || [];
+  const mappedOptions = options.map(option => ({label: option.name, id: option.id}));
 
   return (
     <Autocomplete
