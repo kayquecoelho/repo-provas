@@ -95,6 +95,7 @@ export default function Login() {
           autoComplete="off"
         >
           <EmailInput
+            id="email"
             label="Email Address"
             isLoading={isLoading}
             handleChange={handleChange}
@@ -102,6 +103,7 @@ export default function Login() {
           />
 
           <PasswordInput
+            id="password"
             label="Password"
             value={formData.password}
             handleChange={handleChange}

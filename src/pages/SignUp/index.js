@@ -109,6 +109,7 @@ export default function SignUp() {
           autoComplete="off"
         >
           <EmailInput
+            id="email"
             label="Email Address"
             isLoading={isLoading}
             handleChange={handleChange}
@@ -116,6 +117,7 @@ export default function SignUp() {
           />
 
           <PasswordInput
+            id="password"
             label="Password"
             value={formData.password}
             handleChange={handleChange}
@@ -124,6 +126,7 @@ export default function SignUp() {
           />
 
           <PasswordInput
+            id="confirm-password"
             label="Confirm Password"
             value={formData.confirmPassword}
             handleChange={handleChange}

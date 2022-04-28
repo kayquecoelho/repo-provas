@@ -8,18 +8,19 @@ export default function PasswordInput({
   value,
   handleChange,
   label,
+  id,
 }) {
   const [showPassword, setShowPassword] = useState(false);
-  const name = label === "Password" ? 'password': 'confirmPassword';
+  const name = label === "Password" ? "password" : "confirmPassword";
   return (
     <TextField
+      id={id}
       error={errorFeedback.error}
       helperText={errorFeedback.message}
       margin="normal"
       required
       disabled={isLoading}
       fullWidth
-      id="confirm-password"
       value={value}
       type={showPassword ? "text" : "password"}
       onChange={(event) => handleChange(name, event)}
