@@ -1,11 +1,14 @@
 import { Box, Divider, TextField, Typography } from "@mui/material";
 import LogoComponent from "../../../components/Logo";
 import LogoutIcon from "@mui/icons-material/Logout";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import useAuth from "../../../hooks/useAuth";
 
-export default function Header({ logout, setSearch, search, hideInput }) {
+export default function Header({ setSearch, search, hideInput }) {
   const { pathname } = useLocation();
-
+  const { logout } = useAuth();
+  const navigate = useNavigate();
+  
   return (
     <>
       <Box
@@ -25,9 +28,13 @@ export default function Header({ logout, setSearch, search, hideInput }) {
         </Box>
 
         <LogoutIcon
-          onClick={logout}
+          onClick={() => {
+            logout();
+            navigate("/");
+          }}
           sx={{ fontSize: "35px", cursor: "pointer" }}
         />
+        
       </Box>
       {!hideInput ? (
         <TextField

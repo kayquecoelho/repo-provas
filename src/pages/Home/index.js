@@ -14,7 +14,7 @@ export default function Home() {
   const [data, setData] = useState([]);
   const [search, setSearch] = useState("");
   const { pathname } = useLocation();
-  const { token } = useAuth();
+  const { token, logout } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -32,11 +32,6 @@ export default function Home() {
     // eslint-disable-next-line
   }, [pathname]);
 
-  function logout() {
-    localStorage.removeItem("token");
-    navigate("/");
-  }
-
   if (data[0]?.disciplineTeacher && pathname === "/home") return null;
   if (data[0]?.disciplines && pathname === "/teachers") return null;
 
@@ -53,6 +48,7 @@ export default function Home() {
       alert(error.response.data);
       if (error.response.status === 401) {
         logout();
+        navigate("/");
       }
     }
   }
@@ -93,7 +89,7 @@ export default function Home() {
           alignItems: "center",
         }}
       >
-        <Header logout={logout} setSearch={setSearch} search={search} />
+        <Header setSearch={setSearch} search={search} />
 
         <Navigation setData={setData} />
 
