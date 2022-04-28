@@ -1,9 +1,19 @@
 import { LoadingButton } from "@mui/lab";
-import { Autocomplete, Box, Container, CssBaseline, TextField } from "@mui/material";
-import { useState } from "react";
+import {
+  Autocomplete,
+  Box,
+  Container,
+  CssBaseline,
+  TextField,
+} from "@mui/material";
+import { useEffect, useState } from "react";
 import Header from "../Home/Header";
+import useAuth from "../../hooks/useAuth";
+import api from "../../services/api";
 
 export default function AddTests() {
+  const { token } = useAuth();
+
   const [testData, setTestData] = useState({
     title: "",
     pdfUrl: "",
@@ -11,10 +21,35 @@ export default function AddTests() {
     discipline: null,
     instructor: null,
   });
+  const [categories, setCategories] = useState([]);
+  const [disciplines, setDisciplines] = useState([]);
+  const [instructors, setInstructors] = useState([]);
+
+  useEffect(() => {
+    if (!categories.length && !disciplines.length){
+      getCategoriesAndDisciplines();
+    }
+
+    if (testData.discipline){
+      
+    }
+  }, [testData])
+
+  async function getCategoriesAndDisciplines(){
+    try {
+      const categories = await api.getCategories(token);
+      const disciplines = await api.getDisciplines(token);
+
+      setCategories(categories.data);
+      setDisciplines(disciplines.data);
+    } catch (error) {
+      alert(error.response.data); 
+    }
+  }
 
   function handleChange(event, name, newValue) {
     if (name) {
-      return setTestData({...testData, [name]: newValue})
+      return setTestData({ ...testData, [name]: newValue });
     }
     setTestData({ ...testData, [event.target.name]: event.target.value });
   }
@@ -60,12 +95,13 @@ export default function AddTests() {
             handleChange={handleChange}
             name="pdfUrl"
           />
-          <AutocompleteComponent 
+          <AutocompleteComponent
             label="Categories"
             testData={testData}
             handleChange={handleChange}
-            name="category"    
-            value={testData.category}      
+            name="category"
+            value={testData.category}
+            options={categories}
           />
           <AutocompleteComponent
             label="Discipline"
@@ -73,8 +109,9 @@ export default function AddTests() {
             handleChange={handleChange}
             name="discipline"
             value={testData.discipline}
+            options={disciplines}
           />
-          <AutocompleteComponent 
+          <AutocompleteComponent
             label="Instructor"
             testData={testData}
             handleChange={handleChange}
@@ -104,16 +141,22 @@ function Input({ label, value, handleChange, name }) {
   );
 }
 
-function AutocompleteComponent({label, testData, handleChange, name, value}) {
+function AutocompleteComponent({ label, testData, handleChange, name, value, options }) {
+  const mappedOptions = options?.map(option => ({label: option.name, id: option.id})) || [];
+
   return (
     <Autocomplete
       disablePortal
       value={value}
-      disabled={name === 'instructor' && !testData.discipline}
-      onChange={(event, newValue) => handleChange(event, name, newValue) }
+      loading={true}
+      disabled={name === "instructor" && !testData.discipline}
+      onChange={(event, newValue) => handleChange(event, name, newValue)}
+      isOptionEqualToValue={(option, value) => option.id === value.id}
       fullWidth
-      options={[]}
-      renderInput={(params) => <TextField margin="normal" {...params} label={label} />}
+      options={mappedOptions}
+      renderInput={(params) => (
+        <TextField margin="normal" {...params} label={label} />
+      )}
     />
   );
 }

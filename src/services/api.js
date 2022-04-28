@@ -3,11 +3,11 @@ import axios from "axios";
 const baseURL = "http://localhost:4000";
 
 function createHeader(token) {
-  const header = { 
+  const header = {
     headers: {
-      Authorization: `Bearer ${token}`
-    }
-  }
+      Authorization: `Bearer ${token}`,
+    },
+  };
   return header;
 }
 
@@ -23,31 +23,48 @@ async function signUp(data) {
   return promise;
 }
 
-async function getTerms(token) {
+async function getTests(token, groupedBy) {
   const header = createHeader(token);
-  const promise = await axios.get(`${baseURL}/terms`, header);
-
-  return promise;
-}
-
-async function getTeachers(token) {
-  const header = createHeader(token);
-  const promise = await axios.get(`${baseURL}/teachers`, header);
+  const promise = await axios.get(
+    `${baseURL}/tests?groupedBy=${groupedBy}`,
+    header
+  );
 
   return promise;
 }
 
 async function increaseViewCount(token, testId) {
   const header = createHeader(token);
-  const promise = await axios.put(`${baseURL}/tests/${testId}/view`, {}, header);
+  const promise = await axios.put(
+    `${baseURL}/tests/${testId}/view`,
+    {},
+    header
+  );
 
   return promise;
 }
 
-export default {
+async function getCategories(token) {
+  const header = createHeader(token);
+  const promise = await axios.get(`${baseURL}/categories`, header);
+
+  return promise;
+}
+
+async function getDisciplines(token) {
+  const header = createHeader(token);
+  const promise = await axios.get(`${baseURL}/disciplines`, header);
+
+  return promise;
+}
+
+const api = {
   login,
   signUp,
-  getTerms,
-  getTeachers,
-  increaseViewCount
+  getTests,
+  increaseViewCount,
+  getCategories,
+  getDisciplines,
 };
+
+export default api;

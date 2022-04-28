@@ -23,9 +23,9 @@ export default function Home() {
     }
 
     if (pathname === "/home") {
-      getItems("terms");
+      getTests("terms");
     } else if (pathname === "/teachers") {
-      getItems("teachers");
+      getTests("teachers");
     }
     setSearch("");
     setCurrentListItem(null);
@@ -40,13 +40,13 @@ export default function Home() {
   if (data[0]?.disciplineTeacher && pathname === "/home") return null;
   if (data[0]?.disciplines && pathname === "/teachers") return null;
 
-  async function getItems(type) {
+  async function getTests(groupedBy) {
     let response;
     try {
-      if (type === "teachers") {
-        response = await api.getTeachers(token);
+      if (groupedBy === "teachers") {
+        response = await api.getTests(token, "teachers");
       } else {
-        response = await api.getTerms(token);
+        response = await api.getTests(token, "terms");
       }
       setData(response.data);
     } catch (error) {
