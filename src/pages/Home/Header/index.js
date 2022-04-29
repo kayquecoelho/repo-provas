@@ -1,14 +1,19 @@
-import { Box, Divider, TextField, Typography } from "@mui/material";
-import LogoComponent from "../../../components/Logo";
-import LogoutIcon from "@mui/icons-material/Logout";
+import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import useSearch from "../../../hooks/useSearch";
 import useAuth from "../../../hooks/useAuth";
 
-export default function Header({ setSearch, search, hideInput }) {
+import { Box, Divider, TextField, Typography, Tab } from "@mui/material";
+import { TabContext, TabList } from "@mui/lab";
+import LogoComponent from "../../../components/Logo";
+import LogoutIcon from "@mui/icons-material/Logout";
+
+export default function Header({ setCurrentListItem, setData, hideInput }) {
   const { pathname } = useLocation();
   const { logout } = useAuth();
+  const { search, setSearch } = useSearch();
   const navigate = useNavigate();
-  
+
   return (
     <>
       <Box
@@ -34,7 +39,6 @@ export default function Header({ setSearch, search, hideInput }) {
           }}
           sx={{ fontSize: "35px", cursor: "pointer" }}
         />
-        
       </Box>
       {!hideInput ? (
         <TextField
@@ -57,6 +61,42 @@ export default function Header({ setSearch, search, hideInput }) {
         sx={{ width: "100%", height: 2, mt: 4, mb: 4 }}
         variant="middle"
       />
+
+      <Navigation setCurrentListItem={setCurrentListItem} setData={setData} />
     </>
+  );
+}
+
+function Navigation({ setCurrentListItem, setData }) {
+  const { setSearch } = useSearch();
+  const { pathname } = useLocation();
+  const [value, setValue] = useState(pathname);
+  const navigate = useNavigate();
+
+  function handleChange(event, newValue) {
+    if (newValue === "/home") {
+      navigate("/home");
+    } else if (newValue === "/teachers") {
+      navigate("/teachers");
+    } else {
+      navigate("/add");
+    }
+
+    if (pathname !== "/add") {
+      setData([]);
+      setSearch("");
+      setCurrentListItem(null);
+    }
+    setValue(newValue);
+  }
+
+  return (
+    <TabContext value={value}>
+      <TabList onChange={handleChange} aria-label="lab API tabs example">
+        <Tab label="Disciplines" value="/home" />
+        <Tab label="Instructor" value="/teachers" />
+        <Tab label="Add" value="/add" />
+      </TabList>
+    </TabContext>
   );
 }

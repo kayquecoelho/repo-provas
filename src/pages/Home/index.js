@@ -3,16 +3,16 @@ import { useLocation, useNavigate } from "react-router-dom";
 import api from "../../services/api";
 import useAuth from "../../hooks/useAuth";
 
-import { Container, CssBaseline, List, Tab } from "@mui/material";
-import { TabContext, TabList } from "@mui/lab";
+import { Container, CssBaseline, List } from "@mui/material";
 import Terms from "./Terms";
 import Teachers from "./Teacher";
 import Header from "./Header";
+import useSearch from "../../hooks/useSearch";
 
 export default function Home() {
   const [currentListItem, setCurrentListItem] = useState(null);
   const [data, setData] = useState([]);
-  const [search, setSearch] = useState("");
+  const { search } = useSearch();
   const { pathname } = useLocation();
   const { token, logout } = useAuth();
   const navigate = useNavigate();
@@ -27,7 +27,7 @@ export default function Home() {
     } else if (pathname === "/teachers") {
       getTests("teachers");
     }
-    setSearch("");
+
     setCurrentListItem(null);
     // eslint-disable-next-line
   }, [pathname]);
@@ -89,9 +89,7 @@ export default function Home() {
           alignItems: "center",
         }}
       >
-        <Header setSearch={setSearch} search={search} />
-
-        <Navigation setData={setData} />
+        <Header setCurrentListItem={setCurrentListItem} setData={setData} />
 
         <List sx={{ width: "100%", maxWidth: 700 }}>
           {pathname === "/home" &&
@@ -123,33 +121,5 @@ export default function Home() {
         </List>
       </Container>
     </>
-  );
-}
-
-function Navigation({ setData }) {
-  const { pathname } = useLocation();
-  const [value, setValue] = useState(pathname);
-  const navigate = useNavigate();
-
-  function handleChange(event, newValue) {
-    if (newValue === "/home") {
-      navigate("/home");
-    } else if (newValue === "/teachers") {
-      navigate("/teachers");
-    } else {
-      navigate("/add");
-    }
-    setValue(newValue);
-    setData([]);
-  }
-
-  return (
-    <TabContext value={value}>
-      <TabList onChange={handleChange} aria-label="lab API tabs example">
-        <Tab label="Disciplines" value="/home" />
-        <Tab label="Instructor" value="/teachers" />
-        <Tab label="Add" value="/add" />
-      </TabList>
-    </TabContext>
   );
 }
