@@ -65,9 +65,22 @@ export default function AddTests() {
     setTestData({ ...testData, [event.target.name]: event.target.value });
   }
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault();
-    setTestData({ ...testData, [event.target.name]: event.target.value });
+
+    const data = {
+      name: testData.title,
+      pdfUrl: testData.pdfUrl,
+      categoryId: testData.category.id,
+      disciplineId: testData.discipline.id,
+      teacherId: testData.instructor.id
+    }
+
+    try {
+      await api.createTest(token, data);
+    } catch (error) {
+      alert(error.response.data);
+    }
   }
 
   return (
@@ -131,7 +144,7 @@ export default function AddTests() {
             options={instructors}
           />
 
-          <LoadingButton variant="contained" fullWidth>
+          <LoadingButton type="submit" variant="contained" fullWidth>
             Send
           </LoadingButton>
         </Box>
@@ -143,6 +156,7 @@ export default function AddTests() {
 function Input({ label, value, handleChange, name }) {
   return (
     <TextField
+      required
       name={name}
       margin="normal"
       fullWidth
@@ -167,7 +181,7 @@ function AutocompleteComponent({ label, testData, handleChange, name, value, opt
       fullWidth
       options={mappedOptions}
       renderInput={(params) => (
-        <TextField margin="normal" {...params} label={label} />
+        <TextField required margin="normal" {...params} label={label} />
       )}
     />
   );

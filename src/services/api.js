@@ -67,6 +67,12 @@ async function getInstructors(token, disciplineId) {
   return promise;
 }
 
+async function createTest(token, testData) {
+  const header = createHeader(token);
+  const promise = await axios.post(`${baseURL}/tests`, testData, header);
+  return promise;
+}
+
 const api = {
   login,
   signUp,
@@ -74,7 +80,8 @@ const api = {
   increaseViewCount,
   getCategories,
   getDisciplines,
-  getInstructors
+  getInstructors,
+  createTest,
 };
 
 export default api;
