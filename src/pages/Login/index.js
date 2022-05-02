@@ -16,6 +16,7 @@ import PasswordInput from "../../components/PasswordInput";
 import EmailInput from "../../components/EmailInput";
 import Button from "../../components/LoadingButton";
 import Footer from "../../components/Footer";
+import sweetAlertService from "../../services/sweetAlertService";
 
 export default function Login() {
   const [formData, setFormData] = useState({
@@ -48,7 +49,11 @@ export default function Login() {
       setAndPersistToken(response.data.token);
       navigate("/home");
     } catch (error) {
-      alert(error.response.data);
+      if (error.response.status === 401) {
+        sweetAlertService.fireFail("Email and/or password invalid!");
+      } else {
+        sweetAlertService.fireFail("Something went wrong! Try it out later!");
+      }
     }
     setIsLoading(false);
   }

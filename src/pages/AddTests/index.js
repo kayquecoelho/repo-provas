@@ -10,34 +10,46 @@ import { useEffect, useState } from "react";
 import Header from "../Home/Header";
 import useAuth from "../../hooks/useAuth";
 import api from "../../services/api";
+import sweetAlertService from "../../services/sweetAlertService";
 
 export default function AddTests() {
   const { token } = useAuth();
-
-  const [testData, setTestData] = useState({
+  const testObject = {
     title: "",
     pdfUrl: "",
     category: null,
     discipline: null,
     instructor: null,
-  });
+  }
+
+  const [testData, setTestData] = useState({...testObject});
   const [categories, setCategories] = useState([]);
   const [disciplines, setDisciplines] = useState([]);
   const [instructors, setInstructors] = useState([]);
 
   useEffect(() => {
-    if (!categories.length && !disciplines.length){
+    if (!categories.length && !disciplines.length) {
       getCategoriesAndDisciplines();
     }
 
-    if (testData.discipline){
+    if (testData.discipline) {
       getTeachers();
     }
 
     //eslint-disable-next-line
-  }, [testData, categories, disciplines])
+  }, [testData, categories, disciplines]);
 
-  async function getCategoriesAndDisciplines(){
+  function errorHandler(error) {
+    if (error.response.status === 401) {
+      sweetAlertService.fireAlert("Your session expired!");
+      logout();
+      navigate("/");
+    } else {
+      sweetAlertService.fireFail("Something went wrong! Try it out later!");
+    }
+  }
+
+  async function getCategoriesAndDisciplines() {
     try {
       const categories = await api.getCategories(token);
       const disciplines = await api.getDisciplines(token);
@@ -45,16 +57,19 @@ export default function AddTests() {
       setCategories(categories.data);
       setDisciplines(disciplines.data);
     } catch (error) {
-      alert(error.response.data); 
+      errorHandler(error);
     }
   }
 
   async function getTeachers() {
     try {
-      const instructors = await api.getInstructors(token, testData.discipline.id);
+      const instructors = await api.getInstructors(
+        token,
+        testData.discipline.id
+      );
       setInstructors(instructors.data);
     } catch (error) {
-      alert(error.response.data);
+      errorHandler(error);
     }
   }
 
@@ -73,13 +88,15 @@ export default function AddTests() {
       pdfUrl: testData.pdfUrl,
       categoryId: testData.category.id,
       disciplineId: testData.discipline.id,
-      teacherId: testData.instructor.id
-    }
+      teacherId: testData.instructor.id,
+    };
 
     try {
       await api.createTest(token, data);
+      sweetAlertService.fireSuccess("The test was created!");
+      setTestData({...testObject});
     } catch (error) {
-      alert(error.response.data);
+      errorHandler(error);
     }
   }
 
@@ -108,12 +125,14 @@ export default function AddTests() {
           }}
         >
           <Input
+            type="text"
             label={"Test title"}
             value={testData.title}
             handleChange={handleChange}
             name="title"
           />
           <Input
+            type="url"
             label="Test PDF"
             value={testData.pdfUrl}
             handleChange={handleChange}
@@ -153,9 +172,10 @@ export default function AddTests() {
   );
 }
 
-function Input({ label, value, handleChange, name }) {
+function Input({ label, value, handleChange, name, type }) {
   return (
     <TextField
+      type={type}
       required
       name={name}
       margin="normal"
@@ -167,8 +187,18 @@ function Input({ label, value, handleChange, name }) {
   );
 }
 
-function AutocompleteComponent({ label, testData, handleChange, name, value, options }) {
-  const mappedOptions = options.map(option => ({label: option.name, id: option.id}));
+function AutocompleteComponent({
+  label,
+  testData,
+  handleChange,
+  name,
+  value,
+  options,
+}) {
+  const mappedOptions = options.map((option) => ({
+    label: option.name,
+    id: option.id,
+  }));
 
   return (
     <Autocomplete

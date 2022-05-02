@@ -15,6 +15,7 @@ import EmailInput from "../../components/EmailInput";
 import Button from "../../components/LoadingButton";
 import GithubButton from "../../components/GithubButton";
 import Footer from "../../components/Footer";
+import sweetAlertService from "../../services/sweetAlertService";
 
 export default function SignUp() {
   const [formData, setFormData] = useState({
@@ -58,10 +59,15 @@ export default function SignUp() {
 
     try {
       await api.signUp({ email, password });
+      sweetAlertService.fireSuccess("Successfully registered!");
 
       navigate("/");
     } catch (error) {
-      alert(error.response.data);
+      if (error.response.status === 409) {
+        sweetAlertService.fireFail("User already exists!");
+      } else {
+        sweetAlertService.fireFail("Something went wrong, try it out later!");
+      }
     }
     setIsLoading(false);
   }

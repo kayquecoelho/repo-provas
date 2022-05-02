@@ -8,6 +8,7 @@ import Terms from "./Terms";
 import Teachers from "./Teacher";
 import Header from "./Header";
 import useSearch from "../../hooks/useSearch";
+import sweetAlertService from "../../services/sweetAlertService";
 
 export default function Home() {
   const [currentListItem, setCurrentListItem] = useState(null);
@@ -45,10 +46,12 @@ export default function Home() {
       }
       setData(response.data);
     } catch (error) {
-      alert(error.response.data);
       if (error.response.status === 401) {
+        sweetAlertService.fireAlert("Your session expired!");
         logout();
         navigate("/");
+      } else {
+        sweetAlertService.fireFail("Something went wrong! Try it out later!");
       }
     }
   }
