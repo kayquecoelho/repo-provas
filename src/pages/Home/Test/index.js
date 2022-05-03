@@ -1,16 +1,14 @@
-import { Link, Typography } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import { Typography } from "@mui/material";
+import styled from "styled-components";
 import useAuth from "../../../hooks/useAuth";
 import api from "../../../services/api";
 
 export default function Test({ category }) {
   const { token } = useAuth();
-  const navigate = useNavigate();
 
   async function increaseViewCount(testId, pdfUrl) {
     try {
       await api.increaseViewCount(token, testId);
-      navigate(pdfUrl)
     } catch (error) {
       alert(error.response.data);
     }
@@ -29,23 +27,26 @@ export default function Test({ category }) {
       {category[1].map((test, index) => (
         <Typography key={index}>
           <Link
-            sx={{
-              textDecoration: "none",
-              fontFamily: "Poppins, sans-serif",
-              fontWeight: "500",
-              fontSize: "1rem",
-              lineHeight: "1.5rem",
-              color: "#969696",
-              cursor: "pointer"
-            }}
+            href={test.pdfUrl}
+            target="_blank"
             onClick={() => increaseViewCount(test.id, test.pdfUrl)}
           >
-            {`${test.termNumber} - ${test.name} (${
-              test.disciplineName || test.teacher
-            }) ${test.viewsCount} views`} 
+            {`${test.name} - (${test.disciplineName || test.teacher}) ${
+              test.viewsCount
+            } views`}
           </Link>
         </Typography>
       ))}
     </>
   );
 }
+
+const Link = styled.a`
+  text-decoration: none;
+  font-family: "Poppins", "sans-serif";
+  font-weight: 500;
+  font-size: "1rem";
+  line-height: "1.5rem";
+  color: #969696;
+  cursor: pointer;
+`;

@@ -30,7 +30,7 @@ export default function Terms({
   return (
     <>
       <ListItemButton onClick={() => handleClick(index)}>
-        <ListItemText primary={number} />
+        <ListItemText primary={`Term ${number}`} />
         {currentListItem === index ? <ExpandLess /> : <ExpandMore />}
       </ListItemButton>
 

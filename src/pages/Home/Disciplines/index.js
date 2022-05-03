@@ -9,9 +9,8 @@ export default function Disciplines({
   index,
   name,
   classes,
-  number
 }) {
-  const categories = aggregateByCategory.terms(classes, number);
+  const categories = aggregateByCategory.terms(classes);
 
   return (
     <>

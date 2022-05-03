@@ -4,11 +4,10 @@ export function teachers(classes) {
   for (let i = 0; i < classes.length; i++) {
     const tests = classes[i].tests;
     const disciplineName = classes[i].discipline.name;
-    const termNumber = classes[i].discipline.term.number;
 
     for (let j = 0; j < tests.length; j++) {
       const categoryName = tests[j].category.name;
-      const newTest = { ...tests[j], disciplineName, termNumber };
+      const newTest = { ...tests[j], disciplineName };
 
       if (categories[categoryName]) {
         categories[categoryName].push(newTest);
@@ -21,7 +20,7 @@ export function teachers(classes) {
   return Object.entries(categories);
 }
 
-export function terms(classes, termNumber) {
+export function terms(classes) {
   const categories = {};
 
   for (let i = 0; i < classes.length; i++) {
@@ -30,7 +29,7 @@ export function terms(classes, termNumber) {
     
     for (let j = 0; j < tests.length; j++) {
       const categoryName = tests[j].category.name;
-      const newTest = { ...tests[j], teacher, termNumber };
+      const newTest = { ...tests[j], teacher };
 
       if (categories[categoryName]) {
         categories[categoryName].push(newTest);

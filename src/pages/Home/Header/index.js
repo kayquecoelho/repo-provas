@@ -50,6 +50,7 @@ export default function Header({ setCurrentListItem, setData, hideInput }) {
               : "Search for instructor"
           }
           value={search}
+          autoComplete="off"
           onChange={(e) => setSearch(e.target.value)}
         />
       ) : (
